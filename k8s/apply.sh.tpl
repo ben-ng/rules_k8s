@@ -27,5 +27,6 @@ RUNFILES="${PYTHON_RUNFILES:-$(guess_runfiles)}"
 2>&1 echo "KUBECONFIG=${KUBECONFIG}"
 2>&1 ls -l "${KUBECONFIG}"
 2>&1 kubectl config view
+2>&1 kubectl config get-clusters
 PYTHON_RUNFILES=${RUNFILES} %{resolve_script} | \
-  KUBECONFIG="${KUBECONFIG}" kubectl --cluster="%{cluster}" %{namespace_arg} apply -f -
+  kubectl --cluster="%{cluster}" %{namespace_arg} apply -f -
