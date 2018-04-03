@@ -22,6 +22,6 @@ function guess_runfiles() {
 }
 
 RUNFILES="${PYTHON_RUNFILES:-$(guess_runfiles)}"
-
+2>&1 echo "KUBECONFIG=${KUBECONFIG}"
 PYTHON_RUNFILES=${RUNFILES} %{resolve_script} | \
   kubectl --cluster="%{cluster}" %{namespace_arg} apply -f -
