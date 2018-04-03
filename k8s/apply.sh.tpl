@@ -24,9 +24,5 @@ function guess_runfiles() {
 set -x
 RUNFILES="${PYTHON_RUNFILES:-$(guess_runfiles)}"
 
-2>&1 echo "KUBECONFIG=${KUBECONFIG}"
-2>&1 ls -l "${KUBECONFIG}"
-2>&1 kubectl config view
-2>&1 kubectl config get-clusters
 PYTHON_RUNFILES=${RUNFILES} %{resolve_script} | \
-  kubectl --cluster="%{cluster}" %{namespace_arg} apply -f -
+  kubectl --token=${K8S_TOKEN} --cluster="%{cluster}" %{namespace_arg} apply -f -
