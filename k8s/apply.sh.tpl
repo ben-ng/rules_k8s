@@ -15,13 +15,27 @@
 # limitations under the License.
 set -euo pipefail
 
+set -x
+
 function guess_runfiles() {
-    pushd ${BASH_SOURCE[0]}.runfiles > /dev/null 2>&1
+    pushd "${BASH_SOURCE[0]}.runfiles" > /dev/null 2>&1
     pwd
     popd > /dev/null 2>&1
 }
 
-RUNFILES="${PYTHON_RUNFILES:-$(guess_runfiles)}"
+tmpfile=$(mktemp)
+trap "rm ${tmpfile}" EXIT
 
+RUNFILES="${PYTHON_RUNFILES:-$(guess_runfiles)}"
 PYTHON_RUNFILES=${RUNFILES} %{resolve_script} | \
-  kubectl --cluster="%{cluster}" %{namespace_arg} apply -f -
+    kubectl --cluster="%{cluster}" %{namespace_arg} apply -f - "$@" | \
+    tee "${tmpfile}"
+
+ROLLOUT_STATUS="%{rollout_status}"
+if [ "${ROLLOUT_STATUS}" == "True" ]; then
+    if grep deployment "${tmpfile}"; then
+        grep deployment "${tmpfile}" | awk -F'"' '{print $2}' | while read -r deployment; do
+            kubectl --cluster="%{cluster}" %{namespace_arg} rollout status "deployment/${deployment}" "$@"
+        done
+    fi
+fi

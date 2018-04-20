@@ -33,6 +33,7 @@ k8s_deploy(
         "hello-http-image": ":server",
     },
     template = "//examples/hellohttp:deployment.json",
+    rollout_status = True,
 )
 
 load("@k8s_service//:defaults.bzl", "k8s_service")
