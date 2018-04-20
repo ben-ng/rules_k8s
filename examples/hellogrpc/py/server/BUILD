@@ -41,6 +41,7 @@ k8s_deploy(
         "us.gcr.io/not-my-project/hello-grpc:staging": ":server",
     },
     template = "//examples/hellogrpc:deployment.yaml",
+    rollout_status = True,
 )
 
 load("@io_bazel_rules_k8s//k8s:objects.bzl", "k8s_objects")
