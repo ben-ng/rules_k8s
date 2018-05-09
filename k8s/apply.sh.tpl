@@ -21,8 +21,7 @@ function guess_runfiles() {
     popd > /dev/null 2>&1
 }
 
-set -x
 RUNFILES="${PYTHON_RUNFILES:-$(guess_runfiles)}"
 
 PYTHON_RUNFILES=${RUNFILES} %{resolve_script} | \
-  kubectl --token=${K8S_TOKEN} --cluster="%{cluster}" %{namespace_arg} apply -f -
+  kubectl --cluster="%{cluster}" %{namespace_arg} apply -f -
